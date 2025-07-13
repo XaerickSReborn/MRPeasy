@@ -1,3 +1,22 @@
+using MRPeasy.Shared.Infrastructure.Interfaces.ASP.Configuration;
+using MRPeasy.Shared.Infrastructure.Persistence.EFC.Configuration;
+using MRPeasy.Shared.Infrastructure.Persistence.EFC.Repositories;
+using MRPeasy.Shared.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using MRPeasy.Inventories.Application.Internal.CommandServices;
+using MRPeasy.Inventories.Application.Internal.QueryServices;
+using MRPeasy.Inventories.Domain.Repositories;
+using MRPeasy.Inventories.Domain.Services;
+using MRPeasy.Inventories.Infrastructure.Persistence.EFC.Repositories;
+using MRPeasy.Inventories.Domain.Model.ValueObjects;
+using MRPeasy.Manufacturing.Application.Internal.CommandServices;
+using MRPeasy.Manufacturing.Application.Internal.QueryServices;
+using MRPeasy.Manufacturing.Domain.Repositories;
+using MRPeasy.Manufacturing.Domain.Services;
+using MRPeasy.Manufacturing.Infrastructure.Persistence.EFC.Repositories;
+using MRPeasy.Manufacturing.Infrastructure.ACL;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -57,8 +76,24 @@ builder.Services.AddSwaggerGen(options =>
 
 // Dependency Injection
 
+// Configuration
+builder.Services.Configure<CapacityThresholds>(builder.Configuration.GetSection("CapacityThresholds"));
+
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Inventories Bounded Context
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ProductDomainService>();
+builder.Services.AddScoped<ProductCommandService>();
+builder.Services.AddScoped<ProductQueryService>();
+
+// Manufacturing Bounded Context
+builder.Services.AddScoped<IBillOfMaterialsItemRepository, BillOfMaterialsItemRepository>();
+builder.Services.AddScoped<IInventoriesContextService, InventoriesContextService>();
+builder.Services.AddScoped<BillOfMaterialsItemDomainService>();
+builder.Services.AddScoped<BillOfMaterialsItemCommandService>();
+builder.Services.AddScoped<BillOfMaterialsItemQueryService>();
 
 
 
